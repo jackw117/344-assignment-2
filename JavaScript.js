@@ -2,10 +2,10 @@
 
 $('#searchBox').keyup(function () {
     word = $(this).val();
-    $('#results').empty();
     if (word.length != 0) {
-        //word = replaceUnderscore(word);
         callWebMethod();
+    } else {
+        $('#results').empty();
     }
 });
 
@@ -19,9 +19,11 @@ function callWebMethod() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (msg) {
+            $('#results').empty();
             var data = eval(msg);
             for (var key in data.d) {
-                $("#results").append(data.d[key] + "<br>");
+                var result = data.d[key];
+                $("#results").append("<p class='suggestion' id='" + result + "'>" + result + "</p>");
             }
         },
         error: function (msg) {
@@ -31,11 +33,8 @@ function callWebMethod() {
     });
 }
 
-function replaceUnderscore(check) {
-    for (var ch in check) {
-        if (ch == ' ') {
-            check($index) = '_';
-        }
-    }
-    return check;
-}
+$("#results").on("click", ".suggestion", function () {
+    word = $(this).attr("id");
+    $("#searchBox").val(word);
+    callWebMethod();
+});

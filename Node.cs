@@ -19,13 +19,7 @@ namespace WebApplication1
         public Node(char letter)
         {
             this.currentChar = letter;
-            if (letter == '$')
-            {
-                this.Children = null;
-            } else
-            {
-                this.Children = new HybridDictionary();
-            }
+            this.Children = new HybridDictionary();
         }
 
         public Node addChild(char character, int value)

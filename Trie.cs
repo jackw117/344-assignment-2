@@ -10,7 +10,7 @@ namespace WebApplication1
     public class Trie
     {
         public Node root { get; private set; }
-        public char end = '$';
+        private char end = '$';
         public List<string> words { get; private set; }
 
         public Trie()
@@ -83,7 +83,7 @@ namespace WebApplication1
             {
                 return 26;
             }
-            else if (ch == '$')
+            else if (ch == end)
             {
                 return 27;
             }
