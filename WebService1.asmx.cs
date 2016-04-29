@@ -31,7 +31,9 @@ namespace WebApplication1
         string outputTest = @"C:\Users\Jack\Downloads\outputTest.txt";
         string outputPath = @"C:\Users\Jack\Downloads\output.txt";
         string outputPathNoUnderscore = @"C:\Users\Jack\Downloads\outputNoUnderscore.txt";
-        
+
+        string path = System.IO.Path.GetTempPath() + "\\outputNoUnderscore.txt";
+
         public static Trie allWords = new Trie();
 
         [WebMethod]
@@ -62,7 +64,6 @@ namespace WebApplication1
             CloudBlobContainer container = blobClient.GetContainerReference("assignment2blob");
 
             CloudBlockBlob blockBlob = container.GetBlockBlobReference("outputNoUnderscore.txt");
-            var path = @"C:\Users\Jack\Desktop\outputNoUnderscore.txt";
             blockBlob.DownloadToFile(path, FileMode.Create);
         }
 
@@ -87,36 +88,30 @@ namespace WebApplication1
         public string addToTrie()
         {
             string line = "";
-            using (StreamReader sr = new StreamReader(outputPathNoUnderscore))
+            int check = 0;
+            using (StreamReader sr = new StreamReader(path))
             {
                 Process currentProcess = Process.GetCurrentProcess();
-                long memorySize = currentProcess.PrivateMemorySize64;
-                long workingSet = System.Diagnostics.Process.GetCurrentProcess().WorkingSet64;
                 long mem = GC.GetTotalMemory(true);
-                PerformanceCounter currentPerf = new PerformanceCounter("Memory", "Available MBytes");
-                //50 = 53687091
-                long stop = 102428800;
-                long max = 1073741824;
-                int check = 0;
-                double available = currentPerf.NextValue();
                 while (sr.EndOfStream == false)
                 {
-                    if (check == 1000)
+                    line = sr.ReadLine();
+                    if (check % 10000 == 0)
                     {
                         currentProcess = Process.GetCurrentProcess();
-                        mem = GC.GetTotalMemory(true);
-                        if (mem > 953741824)
+                        mem = GC.GetTotalMemory(false);
+                        Debug.Write(mem);
+                        Debug.Write(line);
+                        if (mem > 903741824)
                         {
                             break;
                         }
-                        check = 0;
                     }
-                    line = sr.ReadLine();
                     allWords.addWord(line);
                     check++;
                 }
             }
-            return line;
+            return line + " " + check;
         }
 
         //something like creating an empty string and adding results to it after typing each letter
